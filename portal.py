@@ -158,7 +158,7 @@ PLATAFORMAS = [
         cor="#FF4B4B",
         descricao="Os cálculos usam regras aproximadas de 2026 (INSS e IRRF). Para uso profissional, valide com contador",
         modulo="holerite"
-    )
+    ),
     Plataforma(
         id="relatorios",
         nome="Sistema de Relatórios",
