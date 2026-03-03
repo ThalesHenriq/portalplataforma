@@ -280,6 +280,10 @@ def modulo_estoque():
     })
     st.dataframe(dados_estoque, use_container_width=True, hide_index=True)
 
+def modulo_holerite():
+"""Modulo_holerite():"""
+st.page_link("https://holeriteon-dlxxg3jqgtz25q9tf4wn7z.streamlit.app/", label="Ir para Módulo de Vendas", icon="💰")
+
 def modulo_relatorios():
     """Módulo do Sistema de Relatórios"""
     st.header("📈 Sistema de Relatórios")
