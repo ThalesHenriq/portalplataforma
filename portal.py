@@ -158,7 +158,7 @@ PLATAFORMAS = [
         icone="📄",
         cor="#27AE60",
         descricao="Os cálculos usam regras aproximadas de 2026 (INSS e IRRF). Para uso profissional, valide com contador",
-        modulo="holerite",
+        modulo="holerite_externo",  # Nome diferente para não conflitar
         link_externo="https://holeriteon-dlxxg3jqgtz25q9tf4wn7z.streamlit.app/"
     ),
     Plataforma(
@@ -290,40 +290,82 @@ def modulo_estoque():
     })
     st.dataframe(dados_estoque, use_container_width=True, hide_index=True)
 
-def modulo_holerite():
+def modulo_holerite_externo():
     """Módulo do Sistema de Holerite - Redireciona para link externo"""
     st.header("📄 Sistema de Holerite")
     
-    st.markdown("""
+    # Obter o link da plataforma
+    plataforma = next(p for p in PLATAFORMAS if p.id == "holerite")
+    
+    st.markdown(f"""
         <div style='
-            background-color: #27AE60;
-            padding: 40px;
+            background: linear-gradient(135deg, #27AE60 0%, #219653 100%);
+            padding: 50px;
             border-radius: 20px;
             text-align: center;
             color: white;
             margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         '>
-            <h2 style='color: white; font-size: 3em; margin-bottom: 20px;'>🌐 Sistema Externo</h2>
-            <p style='font-size: 1.2em; margin-bottom: 30px;'>
-                Esta plataforma é hospedada externamente. Clique no botão abaixo para acessar.
+            <div style='font-size: 5em; margin-bottom: 20px;'>📄</div>
+            <h2 style='color: white; font-size: 2.5em; margin-bottom: 20px;'>Sistema de Holerite</h2>
+            <p style='font-size: 1.2em; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;'>
+                Este é um sistema externo especializado em cálculos de holerite.
             </p>
-            <p style='font-size: 0.9em; background-color: rgba(0,0,0,0.1); padding: 10px; border-radius: 10px;'>
-                ⚠️ Os cálculos usam regras aproximadas de 2026 (INSS e IRRF).<br>
+            <div style='
+                background-color: rgba(255,255,255,0.2);
+                padding: 15px;
+                border-radius: 10px;
+                margin: 20px auto;
+                max-width: 500px;
+                font-size: 0.95em;
+            '>
+                ⚠️ <strong>Aviso importante:</strong><br>
+                Os cálculos usam regras aproximadas de 2026 (INSS e IRRF).<br>
                 Para uso profissional, valide com um contador.
-            </p>
+            </div>
         </div>
     """, unsafe_allow_html=True)
     
-    # Botão para link externo
+    # Botões para acesso
     col1, col2, col3 = st.columns([1, 2, 1])
+    
     with col2:
-        plataforma = next(p for p in PLATAFORMAS if p.id == "holerite")
+        # Link button do Streamlit (abre na mesma aba)
         st.link_button(
-            "🚀 Acessar Sistema de Holerite",
+            "🌐 Abrir Sistema de Holerite (mesma aba)",
             plataforma.link_externo,
             use_container_width=True,
             type="primary"
         )
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Link button com target _blank usando HTML (abre em nova aba)
+        st.markdown(f"""
+            <a href="{plataforma.link_externo}" target="_blank" style="text-decoration: none;">
+                <div style='
+                    background-color: white;
+                    color: #27AE60;
+                    padding: 12px 20px;
+                    border-radius: 10px;
+                    text-align: center;
+                    font-weight: bold;
+                    border: 2px solid #27AE60;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                '>
+                    🔗 Abrir em Nova Aba
+                </div>
+            </a>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Botão para voltar
+        if st.button("← Voltar para o Dashboard", use_container_width=True):
+            st.session_state.pagina = "dashboard"
+            st.rerun()
 
 def modulo_relatorios():
     """Módulo do Sistema de Relatórios"""
@@ -372,7 +414,7 @@ MODULOS = {
     "financeiro": modulo_financeiro,
     "rh": modulo_rh,
     "estoque": modulo_estoque,
-    "holerite": modulo_holerite,
+    "holerite_externo": modulo_holerite_externo,  # Nome atualizado
     "relatorios": modulo_relatorios
 }
 
@@ -405,6 +447,10 @@ def tela_login():
             text-align: center;
             color: #666;
             margin-bottom: 30px;
+        }
+        /* Garantir que links externos funcionem */
+        .stLinkButton {
+            width: 100%;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -530,63 +576,67 @@ def dashboard_principal():
     # Criar grid de cards (3 colunas, com ajuste para 7 cards)
     col1, col2, col3 = st.columns(3)
     col4, col5, col6 = st.columns(3)
-    col7, col8, col9 = st.columns(3)
+    col7 = st.columns(1)[0]  # Para o sétimo card
     
-    cols = [col1, col2, col3, col4, col5, col6, col7]
+    # Distribuir os cards
+    with col1:
+        criar_card(PLATAFORMAS[0])
+    with col2:
+        criar_card(PLATAFORMAS[1])
+    with col3:
+        criar_card(PLATAFORMAS[2])
+    with col4:
+        criar_card(PLATAFORMAS[3])
+    with col5:
+        criar_card(PLATAFORMAS[4])
+    with col6:
+        criar_card(PLATAFORMAS[5])
+    with col7:
+        criar_card(PLATAFORMAS[6])
+
+def criar_card(plataforma):
+    """Função auxiliar para criar cards de plataforma"""
     
-    # Exibir cards para cada plataforma
-    for idx, (col, plataforma) in enumerate(zip(cols, PLATAFORMAS)):
-        with col:
-            # CSS personalizado para o card
-            st.markdown(f"""
+    # CSS personalizado para o card
+    st.markdown(f"""
+        <div style='
+            background-color: {plataforma.cor}15;
+            border-radius: 20px;
+            padding: 30px 20px;
+            margin: 10px 0;
+            text-align: center;
+            border: 2px solid {plataforma.cor}30;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        '>
+            <div>
                 <div style='
-                    background-color: {plataforma.cor}15;
-                    border-radius: 20px;
-                    padding: 30px 20px;
-                    margin: 10px 0;
-                    text-align: center;
-                    border: 2px solid {plataforma.cor}30;
-                    transition: transform 0.3s;
-                    cursor: pointer;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    height: 300px;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                '>
-                    <div>
-                        <div style='
-                            font-size: 4em;
-                            margin-bottom: 20px;
-                        '>{plataforma.icone}</div>
-                        <h3 style='
-                            color: {plataforma.cor};
-                            margin-bottom: 10px;
-                            font-size: 1.5em;
-                        '>{plataforma.nome}</h3>
-                        <p style='
-                            color: #666;
-                            margin-bottom: 20px;
-                            font-size: 0.9em;
-                        '>{plataforma.descricao}</p>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            # Botão para acessar a plataforma
-            if st.button(f"Acessar {plataforma.nome}", key=f"btn_{plataforma.id}", use_container_width=True):
-                if plataforma.link_externo:
-                    # Se for link externo, abre em nova aba
-                    st.markdown(f'''
-                        <script>
-                            window.open("{plataforma.link_externo}", "_blank");
-                        </script>
-                    ''', unsafe_allow_html=True)
-                else:
-                    # Se for interno, navega para a página
-                    st.session_state.plataforma_atual = plataforma.id
-                    st.session_state.pagina = "plataforma"
-                    st.rerun()
+                    font-size: 4em;
+                    margin-bottom: 20px;
+                '>{plataforma.icone}</div>
+                <h3 style='
+                    color: {plataforma.cor};
+                    margin-bottom: 10px;
+                    font-size: 1.5em;
+                '>{plataforma.nome}</h3>
+                <p style='
+                    color: #666;
+                    margin-bottom: 20px;
+                    font-size: 0.9em;
+                '>{plataforma.descricao[:100]}{"..." if len(plataforma.descricao) > 100 else ""}</p>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Botão para acessar a plataforma
+    if st.button(f"Acessar {plataforma.nome}", key=f"btn_{plataforma.id}", use_container_width=True):
+        st.session_state.plataforma_atual = plataforma.id
+        st.session_state.pagina = "plataforma"
+        st.rerun()
 
 # ========== PÁGINA DA PLATAFORMA SELECIONADA ==========
 
@@ -598,18 +648,6 @@ def pagina_plataforma():
     
     if not plataforma_atual:
         st.error("Plataforma não encontrada!")
-        return
-    
-    # Se for uma plataforma com link externo, redireciona
-    if plataforma_atual.link_externo:
-        st.markdown(f'''
-            <meta http-equiv="refresh" content="0; url={plataforma_atual.link_externo}">
-            <p style="text-align: center; padding: 50px;">
-                Redirecionando para {plataforma_atual.nome}...<br>
-                Se não for redirecionado automaticamente, 
-                <a href="{plataforma_atual.link_externo}" target="_blank">clique aqui</a>.
-            </p>
-        ''', unsafe_allow_html=True)
         return
     
     # Header com navegação
