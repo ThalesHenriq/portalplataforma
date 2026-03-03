@@ -159,7 +159,7 @@ PLATAFORMAS = [
         cor="#27AE60",
         descricao="Os cálculos usam regras aproximadas de 2026 (INSS e IRRF). Para uso profissional, valide com contador",
         modulo="holerite",
-        link_externo=https:"//holeriteon-dlxxg3jqgtz25q9tf4wn7z.streamlit.app/"
+        link_externo="https://holeriteon-dlxxg3jqgtz25q9tf4wn7z.streamlit.app/"
     ),
     Plataforma(
         id="relatorios",
