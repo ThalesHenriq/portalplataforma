@@ -151,6 +151,14 @@ PLATAFORMAS = [
         descricao="Controle de estoque e fornecedores",
         modulo="estoque"
     ),
+     Plataforma(
+        id="holerite",
+        nome="Sistema de holerite",
+        icone="📅",
+        cor="#FF4B4B",
+        descricao="Os cálculos usam regras aproximadas de 2026 (INSS e IRRF). Para uso profissional, valide com contador",
+        modulo="holerite"
+    )
     Plataforma(
         id="relatorios",
         nome="Sistema de Relatórios",
@@ -331,6 +339,7 @@ MODULOS = {
     "financeiro": modulo_financeiro,
     "rh": modulo_rh,
     "estoque": modulo_estoque,
+   "holerite": modulo_holerite,
     "relatorios": modulo_relatorios
 }
 
