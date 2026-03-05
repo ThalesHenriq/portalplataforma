@@ -388,7 +388,6 @@ def dashboard_principal():
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 6px 20px rgba(0,0,0,0.08);
         }
@@ -400,6 +399,7 @@ def dashboard_principal():
         .platform-card h3 { margin: 0 0 12px; font-size: 1.65em; }
         .platform-card p { color: #555; font-size: 0.97em; line-height: 1.45; }
         .acessar { color: var(--cor); font-weight: 700; font-size: 1.15em; margin-top: auto; }
+        a.card-link { text-decoration: none; }
         </style>
     """, unsafe_allow_html=True)
 
@@ -413,16 +413,17 @@ def dashboard_principal():
                 plat = PLATAFORMAS[idx]
                 with cols[j]:
                     st.markdown(f"""
-                        <div class="platform-card" 
-                             style="--bg:{plat.cor}15; --border:{plat.cor}30; --cor:{plat.cor};"
-                             onclick="window.parent.location.href = '?plataforma={plat.id}'">
-                            <div>
-                                <div class="icone">{plat.icone}</div>
-                                <h3 style="color:{plat.cor};">{plat.nome}</h3>
-                                <p>{plat.descricao}</p>
+                        <a class="card-link" href="?plataforma={plat.id}">
+                            <div class="platform-card" 
+                                 style="--bg:{plat.cor}15; --border:{plat.cor}30; --cor:{plat.cor};">
+                                <div>
+                                    <div class="icone">{plat.icone}</div>
+                                    <h3 style="color:{plat.cor};">{plat.nome}</h3>
+                                    <p>{plat.descricao}</p>
+                                </div>
+                                <div class="acessar">→ Acessar plataforma</div>
                             </div>
-                            <div class="acessar">→ Acessar plataforma</div>
-                        </div>
+                        </a>
                     """, unsafe_allow_html=True)
 
 # ====================== PÁGINA DA PLATAFORMA ======================
