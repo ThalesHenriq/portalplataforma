@@ -198,41 +198,6 @@ def modulo_estoque():
     st.dataframe(dados, use_container_width=True, hide_index=True)
 
 
-def modulo_holerite_externo():
-    st.header("📄 Sistema de Holerite")
-    plat = next(p for p in PLATAFORMAS if p.id == "holerite")
-    
-    st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #27AE60 0%, #219653 100%); padding: 50px; border-radius: 20px; 
-                    text-align: center; color: white; margin: 30px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);'>
-            <div style='font-size: 5em; margin-bottom: 20px;'>📄</div>
-            <h2 style='color:white; font-size:2.5em;'>Sistema de Holerite</h2>
-            <p style='font-size:1.2em; max-width:600px; margin:0 auto 30px;'>
-                Este é um sistema externo especializado em cálculos de holerite.
-            </p>
-            <div style='background:rgba(255,255,255,0.2); padding:15px; border-radius:10px; max-width:500px; margin:20px auto; font-size:0.95em;'>
-                ⚠️ <strong>Aviso:</strong> Cálculos aproximados de 2026 (INSS/IRRF). Valide com contador.
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
-        st.link_button("🌐 Abrir na mesma aba", plat.link_externo, use_container_width=True, type="primary")
-        st.markdown(f"""
-            <a href="{plat.link_externo}" target="_blank" style="text-decoration:none;">
-                <div style='background:white; color:#27AE60; padding:12px; border-radius:10px; text-align:center;
-                            font-weight:bold; border:2px solid #27AE60; margin:15px 0;'>
-                    🔗 Abrir em Nova Aba
-                </div>
-            </a>
-        """, unsafe_allow_html=True)
-        
-        if st.button("← Voltar ao Dashboard", use_container_width=True):
-            st.session_state.pagina = "dashboard"
-            st.rerun()
-
-
 def modulo_relatorios():
     st.header("📈 Sistema de Relatórios")
     st.subheader("Relatórios Disponíveis")
@@ -271,7 +236,6 @@ MODULOS = {
     "financeiro": modulo_financeiro,
     "rh": modulo_rh,
     "estoque": modulo_estoque,
-    "holerite_externo": modulo_holerite_externo,
     "relatorios": modulo_relatorios
 }
 
@@ -353,12 +317,15 @@ def tela_cadastro():
 
 # ====================== DASHBOARD COM CARDS CLICÁVEIS ======================
 def dashboard_principal():
-    # Tratamento de query params para card clicado
+    # Tratamento de query params para card clicado (apenas para plataformas internas)
     query_params = st.query_params.to_dict()
     if "plataforma" in query_params:
         plat_id = query_params["plataforma"][0]
-        st.session_state.plataforma_atual = plat_id
-        st.session_state.pagina = "plataforma"
+        # Verificar se é interna
+        plat = next((p for p in PLATAFORMAS if p.id == plat_id), None)
+        if plat and not plat.link_externo:
+            st.session_state.plataforma_atual = plat_id
+            st.session_state.pagina = "plataforma"
         st.query_params.clear()
         st.rerun()
 
@@ -399,7 +366,7 @@ def dashboard_principal():
         .platform-card h3 { margin: 0 0 12px; font-size: 1.65em; }
         .platform-card p { color: #555; font-size: 0.97em; line-height: 1.45; }
         .acessar { color: var(--cor); font-weight: 700; font-size: 1.15em; margin-top: auto; }
-        a.card-link { text-decoration: none; }
+        a.card-link { text-decoration: none; cursor: pointer; }
         </style>
     """, unsafe_allow_html=True)
 
@@ -412,8 +379,14 @@ def dashboard_principal():
             if idx < len(PLATAFORMAS):
                 plat = PLATAFORMAS[idx]
                 with cols[j]:
+                    if plat.link_externo:
+                        href = plat.link_externo
+                        target = "_blank"
+                    else:
+                        href = f"?plataforma={plat.id}"
+                        target = "_self"
                     st.markdown(f"""
-                        <a class="card-link" href="?plataforma={plat.id}">
+                        <a class="card-link" href="{href}" target="{target}">
                             <div class="platform-card" 
                                  style="--bg:{plat.cor}15; --border:{plat.cor}30; --cor:{plat.cor};">
                                 <div>
